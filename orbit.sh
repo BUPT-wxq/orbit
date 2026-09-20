@@ -91,7 +91,7 @@ Usage:
   $ORBIT_CMD memo [<repo>] [--refresh|--scaffold]
   $ORBIT_CMD new "<goal>" [--name <name>] [--no-goal] [--exec "<cmd>"]
   $ORBIT_CMD add <repo> [--ref <tag/branch>] [-s|--silent]
-  $ORBIT_CMD remove <repo> [--force] [--keep-branch] [--json]
+  $ORBIT_CMD remove <repo> [--force] [--json]
   $ORBIT_CMD switch [-c] [repo] <name>
   $ORBIT_CMD sync [repo...] [--force] [--branch <branch>]
   $ORBIT_CMD done [--pr <url>...] [--json]
@@ -1389,20 +1389,19 @@ orbit_add() {
 }
 
 orbit_remove() {
-  local repo_name="" force=0 keep_branch=0 json_mode=0
+  local repo_name="" force=0 json_mode=0
 
   while [ "$#" -gt 0 ]; do
     case "$1" in
       --force) force=1; shift ;;
-      --keep-branch) keep_branch=1; shift ;;
       --json) json_mode=1; shift ;;
-      -*) orbit_fail "usage: orbit remove <repo> [--force] [--keep-branch] [--json]" ;;
+      -*) orbit_fail "usage: orbit remove <repo> [--force] [--json]" ;;
       *)
-        [ -z "$repo_name" ] || orbit_fail "usage: orbit remove <repo> [--force] [--keep-branch] [--json]"
+        [ -z "$repo_name" ] || orbit_fail "usage: orbit remove <repo> [--force] [--json]"
         repo_name="$1"; shift ;;
     esac
   done
-  [ -n "$repo_name" ] || orbit_fail "usage: orbit remove <repo> [--force] [--keep-branch] [--json]"
+  [ -n "$repo_name" ] || orbit_fail "usage: orbit remove <repo> [--force] [--json]"
   orbit_require_repo_name "$repo_name"
 
   local root
@@ -1453,7 +1452,7 @@ orbit_remove() {
   # Computed BEFORE worktree removal — git refuses to delete a branch while
   # a worktree has it checked out, so the deletion must follow the worktree.
   local verdict="delete" v_flag="-d"
-  if [ -n "$local_branch" ] && [ "$keep_branch" -eq 0 ]; then
+  if [ -n "$local_branch" ]; then
     orbit_branch_verdict "$repo_dir" "$local_branch" "$force"
     if [ "$ORBIT_VERDICT" = "delete" ]; then
       verdict="delete"
@@ -1479,7 +1478,7 @@ orbit_remove() {
 
   # Branch deletion: now safe (no worktree is checking out the branch).
   local branch_action="skipped"
-  if [ -n "$local_branch" ] && [ "$keep_branch" -eq 0 ]; then
+  if [ -n "$local_branch" ]; then
     if [ "$verdict" = "delete" ]; then
       if LC_ALL=C git -C "$repo_dir" branch "$v_flag" "$local_branch" >/dev/null 2>&1; then
         branch_action="deleted"
@@ -1490,8 +1489,6 @@ orbit_remove() {
     else
       branch_action="kept"
     fi
-  elif [ "$keep_branch" -eq 1 ] && [ -n "$local_branch" ]; then
-    branch_action="kept(--keep-branch)"
   fi
 
   if [ "$json_mode" -eq 1 ]; then
@@ -1512,8 +1509,6 @@ orbit_remove() {
       deleted)        printf '  deleted branch: %s\n' "$local_branch" ;;
       kept)           printf '  kept branch (unmerged): %s — review: git -C .repos/%s log origin/%s..%s\n' \
                          "$local_branch" "$repo_name" "$default_branch" "$local_branch" >&2 ;;
-      kept\(--keep-branch\))
-                       printf '  kept branch: %s\n' "$local_branch" ;;
     esac
   fi
 }
@@ -4622,7 +4617,7 @@ _orbit_completions() {
       ;;
     remove)
       if [[ "$cur" == -* ]]; then
-        COMPREPLY=($(compgen -W "--force --keep-branch --json" -- "$cur"))
+        COMPREPLY=($(compgen -W "--force --json" -- "$cur"))
       else
         COMPREPLY=($(compgen -W "$(_orbit_repo_names)" -- "$cur"))
       fi

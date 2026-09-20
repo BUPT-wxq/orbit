@@ -274,7 +274,6 @@ Safety defaults mirror `prune` — refuses to silently lose anything:
 
 Options:
 
-- `--keep-branch` — remove only the worktree; leave the scoped branch behind so `orbit add <repo>` can recreate the worktree on the same branch later.
 - `--force` — discard uncommitted changes and force-delete the local branch.
 - `--json` — machine-readable output (`workspace`, `repo`, `worktreeRemoved`,
   `branch`, `branchAction`).
@@ -653,7 +652,7 @@ orbit sync [repo...] [--force] [--branch <branch>]   # --force / --branch: proje
 # Workspace lifecycle
 orbit new "<goal>" [--name <name>] [--no-goal] [--exec "<cmd>"]
 orbit add <repo> [--ref <tag/branch>] [-s|--silent]
-orbit remove <repo> [--force] [--keep-branch] [--json]
+orbit remove <repo> [--force] [--json]
 orbit switch [repo] <name>
 orbit switch -c [repo] <name>
 orbit jot [<repo>] ["<text>"]

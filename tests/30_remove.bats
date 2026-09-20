@@ -38,17 +38,6 @@ teardown() {
   ! git -C "$proj/.repos/myrepo" rev-parse --verify --quiet refs/heads/ws/dev/main >/dev/null 2>&1
 }
 
-@test "remove: --keep-branch leaves the scoped branch behind" {
-  local proj="$SANDBOX/remove-test3"
-  clone_project "$proj"
-  cd "$proj" && orbit new "remove test" --name dev >/dev/null 2>&1
-  cd "$proj/dev" && orbit add myrepo >/dev/null 2>&1
-
-  cd "$proj/dev" && orbit remove myrepo --keep-branch >/dev/null 2>&1
-  [ ! -d "$proj/dev/myrepo" ]
-  git -C "$proj/.repos/myrepo" rev-parse --verify --quiet refs/heads/ws/dev/main >/dev/null 2>&1
-}
-
 @test "remove: pool repo (.repos/<name>) is never touched" {
   local proj="$SANDBOX/remove-test4"
   clone_project "$proj"
