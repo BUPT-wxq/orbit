@@ -1452,13 +1452,12 @@ orbit_remove() {
   # instead of silently vanishing. --force flips the verdict to delete.
   # Computed BEFORE worktree removal — git refuses to delete a branch while
   # a worktree has it checked out, so the deletion must follow the worktree.
-  local verdict="delete" v_flag="-d" v_label="merged"
+  local verdict="delete" v_flag="-d"
   if [ -n "$local_branch" ] && [ "$keep_branch" -eq 0 ]; then
     orbit_branch_verdict "$repo_dir" "$local_branch" "$force"
     if [ "$ORBIT_VERDICT" = "delete" ]; then
       verdict="delete"
       v_flag="$ORBIT_V_FLAG"
-      v_label="$ORBIT_V_LABEL"
     else
       verdict="keep"
     fi
