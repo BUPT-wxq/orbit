@@ -86,6 +86,7 @@ These steps describe the work itself, independent of who performs it. Run them y
    - **Jot triggers (event-driven — don't wait for wrap-up).** Jot the moment you realize (a) this repo also serves a role the card doesn't list, or (b) the real entry point for a task differs from — or is absent in — what the card names. If the discovery isn't a role or an entry point the card needs, it isn't a jot.
    - **Resume/compact sessions still jot.** A cruise block (durables + per-repo status) does not suppress discovery capture, and a compact can wipe your mental "to-jot" note — so jot findings as they surface, even mid-refactor after a compact.
    - **Need another repo?** (e.g., tracing a cross-repo dependency) → go back to steps 2–7: `orbit repos` to screen → `orbit info` to assess → decide whether to add → sync if needed → add → memo check. This cross-repo branch is a natural thing to delegate — a worker runs the same screen → assess → add loop autonomously via its briefing (see "Delegating to sub-agents").
+   - **Drop a repo mid-work.** If a repo you added no longer belongs to this workspace (scope shrunk, or step 4's call was wrong), `orbit remove <repo>` from inside the workspace — destructive but workspace-scoped; refuses on dirty/unmerged work without `--force` (see Safe to run freely). If a worker reaches the same conclusion, report the need rather than running it.
 10. **Wrap-up.** Before finishing, aggregate jot entries and assess PR impact. This step is **incremental aggregation only** — it folds discoveries onto the understanding built in step 7; it is never where first-time exploration you skipped earlier gets done:
    - **Reflect first**: before popping, review what you learned this session about repos you added or worked in. If any structural insight never made it into a jot, jot it now, then continue. Keep scope to repos you added or worked in; do not sweep repos you only read via `orbit info`.
    - **Jot aggregation**: for each repo with jot entries, run `orbit jot <repo> --pop` to consume entries, then `orbit info <repo>` to read current card, merge entries in — staying within the card budget orbit reports (curate, don't append) and following merge-first rules — write back via `cat <<'EOF' | orbit memo <repo>`. Before `orbit done`, run bare `orbit context` and confirm no repo you developed is left with `memo thin` and no capture — `orbit done` warns per repo as the final backstop.
@@ -132,7 +133,7 @@ Recording knowledge (the moment you find it, before it's lost):
   scope), NOT feature-branch changes, NOT debug notes.
 - If you cannot run orbit, put the same items under a "## Discoveries" heading in your report.
 
-Do NOT run: orbit memo / sync / done / new / goal / clone / config — report those needs to me.
+Do NOT run: orbit memo / sync / done / new / goal / clone / config / remove — report those needs to me.
 
 Report back: findings, any repos you added, and your Discoveries list.
 ```
