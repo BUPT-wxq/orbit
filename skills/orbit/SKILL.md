@@ -1,6 +1,6 @@
 ---
 name: orbit
-description: "Operate Orbit - the user's Git-native multi-repo workspace manager. If an <orbit-context> hook block is present, invoke BEFORE your first reply - even when the opening request seems unrelated to orbit. Also invoke on 'orbit start', or when asked to start working with no block injected (run `orbit context --startup`). Also use for clone, workspace create/manage, add repo, branch switch, status, goal, jot, memo aggregation, or done - or on mentions of workspaces, .repos/, or cross-repo tasks."
+description: "Operate Orbit - the user's Git-native multi-repo workspace manager. If an <orbit-context> hook block is present, invoke BEFORE your first reply - even when the opening request seems unrelated to orbit. Also invoke on 'orbit start', or when asked to start working with no block injected (run `orbit context --startup`). Also use for clone, workspace create/manage, add/remove repo, branch switch, status, goal, jot, memo aggregation, or done - or on mentions of workspaces, .repos/, or cross-repo tasks."
 ---
 
 Use this skill to operate the user's Git-native multi-repo workspace manager (Orbit).
@@ -150,6 +150,7 @@ orbit sync [repo...] [--force] [--branch <branch>]  # updates the POOL repo only
 # Workspace lifecycle (from inside a workspace)
 orbit new ["<goal>"] [--name <name>] [--exec "<cmd>"] [--no-goal]
 orbit add <repo> [--ref <tag/branch>] [-s|--silent]
+orbit remove <repo> [--force] [--json]   # drop a repo's worktree from this workspace; pool repo untouched
 orbit switch [-c] [repo] <name>
 orbit jot [<repo>] ["<text>"]     # push a discovery to the jot queue
 orbit jot [<repo>] --pop [--json]  # pop all entries (consume + delete)
@@ -233,7 +234,7 @@ These orbit subcommands are read-only or idempotent workspace-writes — run the
 - **Destructive read:** `jot --pop` — it *consumes* the queue (read + delete, no undo). Safe to run without asking, but only as the first half of pop→merge: never pop until you're ready to write the memo in the same turn.
 - **Idempotent workspace-write:** `add` `switch` `sync` (bare or with a repo name) `memo` `jot` `goal`
 
-`done` and `new` are workflow-timing commands — non-destructive and reversible; when to run them is governed by the workflow (step 11; Safety rule 3), and whether they prompt is the user's own permission setup — orbit takes no position at the permission layer. `clone` and `config` change project-level / shared state — confirm before running these. `sync --force` and `sync --branch` are not yours either: both destroy or re-point shared pool state and run only from the project root, so report the need rather than trying them (the bare `sync` being safe does not extend to these flags). `prune` is not on your list at all — see Safety rules.
+`done` and `new` are workflow-timing commands — non-destructive and reversible; when to run them is governed by the workflow (step 11; Safety rule 3), and whether they prompt is the user's own permission setup — orbit takes no position at the permission layer. `clone` and `config` change project-level / shared state — confirm before running these. `sync --force` and `sync --branch` are not yours either: both destroy or re-point shared pool state and run only from the project root, so report the need rather than trying them (the bare `sync` being safe does not extend to these flags). `remove` is destructive but workspace-scoped — same call pattern as `prune` for one repo in your own workspace, and it refuses on dirty/unmerged work without `--force`. Run it when you've decided that repo no longer belongs to the workspace (a wrong call loses the local scoped branch unless you've pushed); when in doubt, confirm first. `prune` is not on your list at all — see Safety rules.
 
 ## Communication
 
